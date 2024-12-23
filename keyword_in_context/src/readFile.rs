@@ -10,7 +10,7 @@ use std::fs;
 /// ``
 /// use std::fs;
 ///
-/// let s = reading("test.txt");
+/// let s = reading("readtest.txt");
 /// println!("{:?}", s);
 /// ``
 /// Resultado: [["I'm", "nobody!", "Who", "are", "you?"], 
