@@ -4,7 +4,8 @@ use std::fs;
 /// - `file`: Uma string contendo o nome do arquivo dentro de src a ser processado.
 ///
 /// # Retorno
-/// Um vetor de vetores de strings contendo as linhas do arquivo separadas por espacos.
+/// Um resultado "Ok", se bem sucedido. Para receber a lista de listas de strings precisa usar .unwrap() no
+/// final da chamada da função.
 ///
 /// Resultado: [["I'm", "nobody!", "Who", "are", "you?"], 
 /// ["Are", "you", "nobody,", "too?"], 
