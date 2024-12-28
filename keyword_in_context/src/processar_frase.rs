@@ -38,6 +38,3 @@ fn processar_frase(frase: Vec<String>, stop_words_set: &HashSet<&str>) -> Vec<St
 
     frases_deslocadas
 }
-
-    frases_deslocadas
-}
