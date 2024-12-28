@@ -24,7 +24,7 @@ use std::collections::HashSet;
 ///     "primeiro | semestre O projeto de ISC é de mais para",
 ///     "semestre | O projeto de ISC é de mais para o primeiro"
 /// ];
-fn processar_frase(frase: Vec<String>, stop_words_set: &HashSet<&str>) -> Vec<String> {
+fn processar_frase(frase: Vec<String>, stop_words_set: &HashSet<String>) -> Vec<String> {
     let mut frases_deslocadas = Vec::new();
 
     for (indice, palavra) in frase.iter().enumerate() {
