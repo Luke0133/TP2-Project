@@ -5,6 +5,7 @@ pub mod read_phrase_files;
 pub mod proc_phrases;
 pub mod circ_rot;
 pub mod sort;
+pub mod dict;
 
 use std::env;
 fn main() {
@@ -19,4 +20,18 @@ fn main() {
 + To run with arguments, type 'cargo run args' followed by arguments.
 + For further help, type 'cargo run args -h' or 'cargo run args --help'.\n",s),
     };
+    //Testando uma coisinha :)
+    match dict::ler_stopwords("./files/stopwords.txt") {
+        Ok(stopwords) => {
+            println!("StopWords carregadas: {}", stopwords.len());
+            
+            // Testando com algumas palavras
+            let words_to_test = vec!["the", "hello", "and", "Rust!"];
+            for word in words_to_test {
+                let is_stop = dict::is_stopword(word, &stopwords);
+                println!("A palavra '{}' é uma stop word? {}", word, is_stop);
+            }
+        }
+        Err(e) => println!("Erro ao carregar stop words: {}", e),
+    }
 }
