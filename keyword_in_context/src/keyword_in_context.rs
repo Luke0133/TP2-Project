@@ -16,10 +16,10 @@ use crate::sort;
 pub fn execute(args:Vec<String>)-> Result<bool,String>{
     let mut phrases_file: String = "./files/sentences.txt".to_string();          // Default sentences txt
     let mut stop_words_file: String = "./files/stop_words.txt".to_string();      // Default stop_words txt
-    /*let mut context_len: Option<i32> = None;        // None if the whole sentence is used, Some(n) if user only wants n words around the word in context*/ 
+    let mut context_len: Option<i32> = None;        // None if the whole sentence is used, Some(n) if user only wants n words around the word in context 
     let mut sort_type: String = "alpha".to_string();    // Better explained in sort
 
-    let help = proc_args::process_args(&args,&mut phrases_file, &mut stop_words_file, /*&mut context_len,*/ &mut sort_type);
+    let help = proc_args::process_args(&args,&mut phrases_file, &mut stop_words_file, &mut context_len, &mut sort_type);
     if help?{
         return Ok(true) // Stop when asking for help (this is not an error)
     }
@@ -30,7 +30,7 @@ pub fn execute(args:Vec<String>)-> Result<bool,String>{
     // Gets all non-stop-words phrases in context   
     let mut phrases_in_context = Vec::<String>::new();
     for phrase in phrases_vector{
-        let resulting_phrases = proc_phrases::processar_frase(phrase, &stop_words_hash)?;
+        let resulting_phrases = proc_phrases::processar_frase(phrase, &stop_words_hash,context_len)?;
         phrases_in_context.extend(resulting_phrases);
     }
 

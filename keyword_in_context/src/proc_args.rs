@@ -10,7 +10,7 @@
 ///
 
 pub fn process_args(args: &Vec<String>, phrases_file: &mut String, 
-    stop_words_file: &mut String, /*context_len: &mut Option<i32>,*/ sort_type: &mut String)-> Result<bool,String> {
+    stop_words_file: &mut String, context_len: &mut Option<i32>, sort_type: &mut String)-> Result<bool,String> {
 
     let argc = args.len();
     if argc <= 1 {
@@ -27,14 +27,12 @@ pub fn process_args(args: &Vec<String>, phrases_file: &mut String,
 |   (optional) -h or --help: help with how to run code
 |   (optional) -p or --phrases: followed by a .txt with sentences to be used (uses ./files/sentences.txt as default)
 |   (optional) -w or --words: followed by a .txt with stop words to be used (uses ./files/stop_words.txt as default)
+|   (optional) -l or --length: followed by the number of words to be printed around words in context (defaults to wraping the whole sentence),
+|                              but returns an error if the window is bigger than a given sentence's lenght
 |   (optional) -s or --sort: followed by 'alpha' to sort in alphabetic order, 'sensitive' for a case-sensitive sort,
 |                            'reverse_alpha' for a reverse alphabetic order or 'reverse sensitive' for a reverse case-sensitive sort
 |                            (defaults to 'alpha')\n");
-/*
-Não utilizado:
-|   (optional) -l or --length: followed by the number of words to be printed around words in context (defaults to wraping the whole sentence),
-|                              and if num is bigger than a given sentence, it defaults to wraping around the whole sentence
- */
+ 
                     return Ok(true)
                 }
                 "-p" | "--phrases" => {
@@ -59,7 +57,7 @@ Não utilizado:
                         return Err(format!("{} expects a file path afterwards and none was found.",args[i]));
                     }     
                 }
-                /*
+                
                 "-l" | "--length" => {
                     if i + 1 < argc {
                         if args[i + 1].starts_with("-") {
@@ -72,7 +70,7 @@ Não utilizado:
                         return Err(format!("{} expects an integer afterwards and none was found.",args[i]));
                     }     
                 }
-                */
+                
                 "-s" | "--sort" => {
                     if i + 1 < argc {
                         if args[i + 1].starts_with("-") {
@@ -113,14 +111,14 @@ mod tests {
     fn test_no_args() {
         let mut phrases_file: String = "./files/sentences.txt".to_string();          
         let mut stop_words_file: String = "./files/stop_words.txt".to_string();      
-        /*let mut context_len: Option<i32> = None;*/  
+        let mut context_len: Option<i32> = None;  
         let mut sort_type: String = "alpha".to_string();    
         
         let args = vec![
             "target\\debug\\keyword_in_context.exe".to_string(),
         ];
 
-        match proc_args::process_args(&args,&mut phrases_file, &mut stop_words_file, /*&mut context_len,*/ &mut sort_type) {
+        match proc_args::process_args(&args,&mut phrases_file, &mut stop_words_file, &mut context_len, &mut sort_type) {
             Ok(true) => assert!(false, "An error ocurred, help was not called"),
             Ok(false) => {
                 // Nothing should be updated
@@ -138,7 +136,7 @@ mod tests {
     fn test_help() {
         let mut phrases_file: String = "./files/sentences.txt".to_string();          
         let mut stop_words_file: String = "./files/stop_words.txt".to_string();      
-        /*let mut context_len: Option<i32> = None;*/          
+        let mut context_len: Option<i32> = None;         
         let mut sort_type: String = "alpha".to_string();    
         
         let args = vec![
@@ -147,7 +145,7 @@ mod tests {
             "--help".to_string(),
         ];
 
-        match proc_args::process_args(&args,&mut phrases_file, &mut stop_words_file, /*&mut context_len,*/ &mut sort_type) {
+        match proc_args::process_args(&args,&mut phrases_file, &mut stop_words_file, &mut context_len, &mut sort_type) {
             Ok(true) => assert!(true, "Help was called sucessfully"),
             Ok(false) => assert!(false, "An error ocurred, help returns Ok(true)"),
             Err(s) => assert!(false, "{}", s),
@@ -159,7 +157,7 @@ mod tests {
     fn test_all_but_help() {
         let mut phrases_file: String = "./files/sentences.txt".to_string();          
         let mut stop_words_file: String = "./files/stop_words.txt".to_string();      
-        /*let mut context_len: Option<i32> = None;*/        
+        let mut context_len: Option<i32> = None;        
         let mut sort_type: String = "alpha".to_string(); 
 
         let args = vec![
@@ -170,16 +168,18 @@ mod tests {
             "--sort".to_string(),
             "reverse_alpha".to_string(),
             "-w".to_string(),
-            "./files/none.txt".to_string()
+            "./files/none.txt".to_string(),
+            "-l".to_string(),
+            "4".to_string()
         ];
 
-        match proc_args::process_args(&args,&mut phrases_file, &mut stop_words_file, /*&mut context_len,*/ &mut sort_type) {
+        match proc_args::process_args(&args,&mut phrases_file, &mut stop_words_file, &mut context_len, &mut sort_type) {
             Ok(true) => assert!(false, "An error ocurred, help was not called"),
             Ok(false) => {
                 // Check that the phrases_file, stop_words_file, etc. have been correctly updated
                 assert_eq!(phrases_file, "./files/empty.txt".to_string());  // The correct path from `-p`
                 assert_eq!(stop_words_file, "./files/none.txt".to_string());  // The correct path from `-w`
-                /*assert_eq!(context_len, Some(4));  // The correct number from `--length`*/
+                assert_eq!(context_len, Some(4));  // The correct number from `--length`
                 assert_eq!(sort_type, "reverse_alpha".to_string());  // The correct sort type from `--sort`
             }
             Err(s) => assert!(false, "{}", s),
@@ -191,7 +191,7 @@ mod tests {
     fn test_no_args_error() {
         let mut phrases_file: String = "./files/sentences.txt".to_string();          
         let mut stop_words_file: String = "./files/stop_words.txt".to_string();      
-        /*let mut context_len: Option<i32> = None;      */  
+        let mut context_len: Option<i32> = None;     
         let mut sort_type: String = "alpha".to_string();    
         
         let args = vec![
@@ -199,7 +199,7 @@ mod tests {
             "args".to_string()
         ];
 
-        match proc_args::process_args(&args,&mut phrases_file, &mut stop_words_file, /*&mut context_len,*/ &mut sort_type) {
+        match proc_args::process_args(&args,&mut phrases_file, &mut stop_words_file, &mut context_len, &mut sort_type) {
             Ok(true) => assert!(false, "An error ocurred, help was not called"),
             Ok(false) => assert!(false, "No propper argument was given"),
             Err(s) => assert!(true, "{}", s),
@@ -211,7 +211,7 @@ mod tests {
     fn test_incorrect_args() {
         let mut phrases_file: String = "./files/sentences.txt".to_string();          
         let mut stop_words_file: String = "./files/stop_words.txt".to_string();      
-        /*let mut context_len: Option<i32> = None;*/        
+        let mut context_len: Option<i32> = None;       
         let mut sort_type: String = "alpha".to_string(); 
 
         let args = vec![
@@ -219,10 +219,12 @@ mod tests {
             "args".to_string(),
             "-p".to_string(),      // There should be an error here, since there's no string following '-p' 
             "-w".to_string(),
-            "./files/none.txt".to_string(), 
+            "./files/none.txt".to_string(),
+            "-l".to_string(),
+            "4".to_string() 
         ];
 
-        match proc_args::process_args(&args,&mut phrases_file, &mut stop_words_file, /*&mut context_len,*/ &mut sort_type) {
+        match proc_args::process_args(&args,&mut phrases_file, &mut stop_words_file, &mut context_len, &mut sort_type) {
             Ok(true) => assert!(false, "An error ocurred, help was not called"),
             Ok(false) => assert!(false, "An error ocurred, the program should've failed"),
             Err(s) => assert!(true, "{}", s),
