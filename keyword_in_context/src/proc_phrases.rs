@@ -6,12 +6,12 @@ use crate::circ_rot;
 /// # Parameters
 /// - `frase: Vec<String>`: Vector representing a sentence of strings
 /// - `stop_words_set: &HashSet<String>`: imutable reference to HashSet of stop words
-/// - `length: Option<i32>`: length of window arround non-stop words
+/// - `window: Option<i32>`: length of window arround non-stop words
 /// # Returns
 /// - Result<Vec<String>, String>, where the the vector contains all rotated phrases
 ///
 
-pub fn processar_frase(frase: Vec<String>, stop_words_set: &HashSet<String>, length: Option<i32>) -> Result<Vec<String>, String> {
+pub fn processar_frase(frase: Vec<String>, stop_words_set: &HashSet<String>, window: Option<i32>) -> Result<Vec<String>, String> {
 
     if frase.is_empty() {
         return Err("The sentences vector must not be empty.".to_string());
@@ -26,7 +26,7 @@ pub fn processar_frase(frase: Vec<String>, stop_words_set: &HashSet<String>, len
         let palavra_sem_pontuacao: String = palavra.to_lowercase().chars().filter(|c| c.is_alphanumeric()).collect();
 
         if !stop_words_set.contains(palavra_sem_pontuacao.as_str()) {
-            let frase_deslocada = circ_rot::deslocamento_circular(indice, length,frase.clone());
+            let frase_deslocada = circ_rot::deslocamento_circular(indice, window, frase.clone());
             frases_deslocadas.push(frase_deslocada?);
         }
     }

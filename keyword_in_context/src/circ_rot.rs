@@ -11,8 +11,11 @@ pub fn deslocamento_circular(indice: usize, redor: Option<i32>, palavras: Vec<St
     
     let mut passou_esquerda = false;
     let mut passou_direita = false;
-    if redor != None  {
+    if redor != None  { 
         let valor_redor = redor.unwrap();
+        if valor_redor < 0 {
+            return Err("Window must not be negative!".to_string());
+        }
         let mut index_esquerda = index as i32 - valor_redor;
         if index_esquerda < 0 {
             index_esquerda += tamanho_frase as i32;
