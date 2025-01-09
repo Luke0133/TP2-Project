@@ -4,7 +4,7 @@ Projeto para o curso de Técnicas de Programação 2 da Universidade de Brasíli
 ## Estilo de programação passive aggressive (Rust)
 
 - Vídeo para projeto: [https://youtu.be/xko9XKqME4U](https://youtu.be/xko9XKqME4U)
-- [Instruções para o uso](##como-rodar)
+- [Instruções para o uso](#como-rodar)
 
 O código desenvolvido para aplicar o estilo passive aggressive (em Rust) foi o Keyword in Context:
 
